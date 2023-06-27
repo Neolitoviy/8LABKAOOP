@@ -5,7 +5,7 @@ import pygraphviz as pgv
 from PIL import Image
 from PyQt5.QtWidgets import (
     QMainWindow, QPushButton, QTextEdit, QVBoxLayout, QWidget,
-    QFileDialog, QGraphicsScene, QInputDialog, QMessageBox, QDialog
+    QFileDialog, QGraphicsScene, QInputDialog, QMessageBox, QDialog, QApplication
 )
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
@@ -48,8 +48,22 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.btn_solve)
         self.layout.addWidget(self.text_edit)
         self.layout.addWidget(self.graph_view)
-        # Set initial window geometry
-        self.setGeometry(750, 750, 800, 600)  # x, y, width, height
+
+        # Get screen size
+        screen_geometry = QApplication.desktop().availableGeometry()
+        screen_width = screen_geometry.width()
+        screen_height = screen_geometry.height()
+
+        # Calculate window size
+        window_width = int(screen_width * 0.8)
+        window_height = int(screen_height * 0.6)
+
+        # Calculate window position
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+
+        # Set window size and position
+        self.setGeometry(x, y, window_width, window_height)
 
     def generate_graph(self):
         if self.data is None:
@@ -84,8 +98,8 @@ class MainWindow(QMainWindow):
             G.add_edge(f"{self.ball.stripes[-1][j]} ({len(self.ball.stripes)}, {j + 1})",
                        f"{self.ball.stripes[0][0]} (1, 1)")
 
-        width = self.graph_view.width() / 70
-        height = self.graph_view.height() / 70
+        width = self.graph_view.width() / 20
+        height = self.graph_view.height() / 20
         G.graph_attr.update(size=f"{width},{height}!")
 
         G.layout(prog='dot')
